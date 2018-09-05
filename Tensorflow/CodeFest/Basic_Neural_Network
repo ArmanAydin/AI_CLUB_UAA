@@ -1,0 +1,48 @@
+import tensorflow as tf
+import datetime
+
+Target = tf.placeholder('float', shape=[None,1], name="Target")
+
+with tf.name_scope("Input_Layer") as scope:
+	Input = tf.placeholder('float', shape=[None,2], name="Input")
+	inputBias = tf.Variable(initial_value=tf.random_normal(shape=[3],stddev=0.4),dtype='float',name="Input_Bias")
+
+with tf.name_scope("Hidden_Layer") as scope:
+	weights = tf.Variable(initial_value = tf.random_normal(shape=[2,3],stddev=0.4),dtype='float',name="Hidden_Weights")
+	hiddenBias = tf.Variable(initial_value = tf.random_normal(shape=[1],stddev=0.4),dtype='float',name="Hidden_Bias")
+	tf.summary.histogram(name="Weights_1", values=weights)
+	hiddenLayer = tf.matmul(Input, weights) + inputBias
+	hiddenLayer = tf.sigmoid(hiddenLayer,name="Hidden_Layer_Activation")
+
+with tf.name_scope("Output_Layer") as scope:
+	outputWeights = tf.Variable(initial_value = tf.random_normal(shape=[3,1],stddev=0.4),dtype='float',name="Output_Weights")
+	tf.summary.histogram(name="Weights_2", values=outputWeights)
+	output = tf.matmul(hiddenLayer, outputWeights) + hiddenBias
+	hiddenLayer = tf.sigmoid(output,name="Output_Layer_Activaiton")
+
+with tf.name_scope("Optimizer") as scope:
+	cost = tf.squared_difference(Target,output)
+	cost = tf.reduce_mean(cost)
+	tf.summary.scalar("Error",cost)
+	optimizer = tf.train.AdamOptimizer().minimize(cost)
+
+inp = [[0,0],[1,0],[0,1],[1,1]]
+out = [[0],[1],[1],[0]]
+
+epochs = 4000	# Number of time we want to repeat training
+
+with tf.Session() as sess:
+    tf.global_variables_initializer().run()
+    mergedSummary = tf.summary.merge_all()
+    fileName = "./summary_log/run"+datetime.datetime.now().strftime("%Y-%m-%d--%H-%M-%s")
+    writer = tf.summary.FileWriter(fileName,sess.graph)
+    for i in range(epochs):
+        err, _, summaryOutput = sess.run([cost, optimizer, mergedSummary], feed_dict={Input: inp, Target: out})
+        writer.add_summary(summaryOutput, i)
+    
+    while True:
+        int = [[0,0]]
+        inp[0][0] = input("type 1st input:")
+        inp[0][1] = input("type 2nd input:")
+        print(sess.run([output], feed_dict={Input: inp})[0][0])
+		
