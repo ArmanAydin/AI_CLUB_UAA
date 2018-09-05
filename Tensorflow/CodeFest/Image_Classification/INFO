@@ -1,0 +1,21 @@
+In this part of the Neural Network we will be getting the famous Kaggle's Cats vs. Dogs Competition's data.
+
+You can obtain it through their website:
+===> https://www.kaggle.com/c/dogs-vs-cats
+
+1. Just download it ( though it will take some time because you're downloading nearly 3000 images of cats and dogs) and unzip it.
+
+
+2. Save the directory as 'training'.
+
+
+3. Place it under your parent directory that you've created.
+
+
+4. This directory should also have an empty folder named 'summary_log' so that you can both save your model and look how your
+model is progressing through TensorBoard.
+
+5. NOTE: A CPU on your computer is not a suitable device to train a model like this even though we only have 2 tags. A GPU of
+some kind is necessary. Running this program in your computer will both consume a lot of energy and cause overheating.
+
+
